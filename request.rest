@@ -3,9 +3,16 @@ GET http://localhost:3000/
 
 ###
 ###
-GET http://localhost:3000/post
+GET http://localhost:3000/post?sender=123
 
 ###
 ###
 POST http://localhost:3000/post
+Content-Type: application/json
+
+{
+    "_id": "my_id222",
+    "message": "this is my new message2", 
+    "sender" : "123"
+}
 ###
