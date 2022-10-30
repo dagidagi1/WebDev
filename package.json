@@ -1,0 +1,21 @@
+{
+  "name": "lesson1",
+  "version": "1.0.0",
+  "description": "my first project",
+  "main": "app.js",
+  "scripts": {
+    "test": "test",
+    "start": "node app.js",
+    "devstart": "nodemon app.js"
+  },
+  "author": "Arkadi",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
