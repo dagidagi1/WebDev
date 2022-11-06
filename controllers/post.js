@@ -2,7 +2,6 @@ const Post = require('../models/post_model')
 const { post } = require('../routes/postRoutes')
 
 const getAllPosts = async (req,res, next) =>{
-    res.send('get all posts!')
     let posts = {}
     try{
         if(req.query.sender == null){
@@ -25,11 +24,9 @@ const getPostById = async (req,res,next) =>{
 }
 
 const addPost = async(req,res, next) =>{
-    const req_id = req.body._id
     const req_message = req.body.message
     const req_sender = req.body.sender
     const post = new Post({
-        _id: req_id,
         message: req_message,
         sender: req_sender
     })

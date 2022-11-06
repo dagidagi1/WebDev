@@ -4,9 +4,9 @@
   "description": "my first project",
   "main": "app.js",
   "scripts": {
-    "test": "test",
     "start": "node app.js",
-    "devstart": "nodemon app.js"
+    "devstart": "nodemon app.js",
+    "test": "jest --detectOpenHandles --forceExit"
   },
   "author": "Arkadi",
   "license": "ISC",
@@ -17,6 +17,8 @@
     "mongoose": "^6.7.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "jest": "^29.2.2",
+    "nodemon": "^2.0.20",
+    "supertest": "^6.3.1"
   }
 }
