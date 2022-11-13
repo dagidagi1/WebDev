@@ -3,9 +3,9 @@ const app = require('../server')
 const mongoose = require('mongoose')
 const Post = require('../models/post_model')
 
-const newPostMessage = 'test message'
-const newPostSender = 'tester'
-
+const newPostMessage = ['test message1','test message2','test message3','test message4']
+const newPostSender = ['tester1','tester2','tester3','tester4']
+let test_id = '0'
 beforeAll(async ()=>{
     await Post.remove()
 })
@@ -17,44 +17,52 @@ afterAll(async ()=> {
 })
 
 describe("Post Tests:",()=> {
-
-    
-    test("(2)add new post", async() =>{
+    test("(1.1)add new post", async() =>{
         const response = await request(app).post('/post').send({
-            "message": newPostMessage,
-            "sender": newPostSender
+            "message": newPostMessage[0],
+            "sender": newPostSender[0]
         })
         expect(response.statusCode).toEqual(200)
-        expect(response.body.message).toEqual(newPostMessage)
-        expect(response.body.sender).toEqual(newPostSender)
+        expect(response.body.message).toEqual(newPostMessage[0])
+        expect(response.body.sender).toEqual(newPostSender[0])
     })
-    test("(1)get all posts", async() =>{
+    test("(1.2)add new post", async() =>{
+        const response = await request(app).post('/post').send({
+            "message": newPostMessage[1],
+            "sender": newPostSender[1]
+        })
+        expect(response.statusCode).toEqual(200)
+        expect(response.body.message).toEqual(newPostMessage[1])
+        expect(response.body.sender).toEqual(newPostSender[1])
+    })
+    test("(1.3)add new post", async() =>{
+        const response = await request(app).post('/post').send({
+            "message": newPostMessage[2],
+            "sender": newPostSender[2]
+        })
+        expect(response.statusCode).toEqual(200)
+        expect(response.body.message).toEqual(newPostMessage[2])
+        expect(response.body.sender).toEqual(newPostSender[2])
+    })
+    test("(1.4)add new post", async() =>{
+        const response = await request(app).post('/post').send({
+            "message": newPostMessage[3],
+            "sender": newPostSender[3]
+        })
+        expect(response.statusCode).toEqual(200)
+        expect(response.body.message).toEqual(newPostMessage[3])
+        expect(response.body.sender).toEqual(newPostSender[3])
+        test_id = response.body._id
+    })
+    test("(2)Get all posts", async() =>{
         const response = await request(app).get('/post')
         expect(response.statusCode).toEqual(200)
     })
-
-})
-
-
-
-
-
-
-describe("Init test 1:",()=> {
-    test("(1)add new post", async() =>{
-        const temp = 2
-        expect(temp).toEqual(2)
+    test("(3)Get post by id", async() => {
+        const response = await request(app).get('/post/'+ test_id)
+        expect(response.statusCode).toEqual(200)
+        expect(response.body.message).toEqual(newPostMessage[3])
+        expect(response.body.sender).toEqual(newPostSender[3])
     })
-    test("(2)add new post", async() =>{
-        const temp = 2
-        expect(temp).toEqual(2)
-    })
-    test("(3)add new post", async() =>{
-        const temp = 2
-        expect(temp).toEqual(2)
-    })
-    test("(4)add new post", async() =>{
-        const temp = 2
-        expect(temp).toEqual(2)
-    })
+    
 })

@@ -14,7 +14,7 @@ const db = mongoose.connection
 db.on('error', err => {console.eroor(err)})
 db.once('open', ()=> {console.log('connected to mongo!')})
 
-
+app.use('/pub', express.static('public'))
 app.use('/post', postRouter)
 
 module.exports = app

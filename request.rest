@@ -3,7 +3,7 @@ GET http://localhost:3000/
 
 ###
 ###
-GET http://localhost:3000/post?sender=123
+GET http://localhost:3000/post/123
 
 ###
 ###
