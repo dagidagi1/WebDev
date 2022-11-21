@@ -6,6 +6,7 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const postRoutes_1 = __importDefault(require("./routes/postRoutes"));
+const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -17,5 +18,6 @@ db.on('error', err => { console.error(err); });
 db.once('open', () => { console.log('connected to mongo!'); });
 app.use('/pub', express_1.default.static('public'));
 app.use('/post', postRoutes_1.default);
+app.use('/auth', authRoutes_1.default);
 module.exports = app;
 //# sourceMappingURL=server.js.map

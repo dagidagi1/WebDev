@@ -30,7 +30,7 @@ const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const getPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () { });
 const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req.params.id);
+    //console.log(req.params.id)
     const post = yield post_model_1.default.findById(req.params.id);
     res.status(200).send(post);
 });

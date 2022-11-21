@@ -16,8 +16,10 @@ const supertest_1 = __importDefault(require("supertest"));
 const server_1 = __importDefault(require("../server"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const post_model_1 = __importDefault(require("../models/post_model"));
-const newPostMessage = ['test message1', 'test message2', 'test message3', 'test message4'];
-const newPostSender = ['tester1', 'tester2', 'tester3', 'tester4'];
+const newPostMessage = ['test message1', 'test message2'];
+const updatedPostMessage = 'updated message';
+const wrongPostId = '111111';
+const newPostSender = ['tester1', 'tester2'];
 const newMessage = 'this is the new updated message';
 let test_id = '0';
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,7 +30,7 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
     mongoose_1.default.connection.close();
 }));
 describe("Post Tests:", () => {
-    test("(1.1)add new post", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("(1)add new post", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/post').send({
             "message": newPostMessage[0],
             "sender": newPostSender[0]
@@ -37,7 +39,7 @@ describe("Post Tests:", () => {
         expect(response.body.message).toEqual(newPostMessage[0]);
         expect(response.body.sender).toEqual(newPostSender[0]);
     }));
-    test("(1.2)add new post", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("(1.1)add new post - second post", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/post').send({
             "message": newPostMessage[1],
             "sender": newPostSender[1]
@@ -45,24 +47,6 @@ describe("Post Tests:", () => {
         expect(response.statusCode).toEqual(200);
         expect(response.body.message).toEqual(newPostMessage[1]);
         expect(response.body.sender).toEqual(newPostSender[1]);
-    }));
-    test("(1.3)add new post", () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield (0, supertest_1.default)(server_1.default).post('/post').send({
-            "message": newPostMessage[2],
-            "sender": newPostSender[2]
-        });
-        expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(newPostMessage[2]);
-        expect(response.body.sender).toEqual(newPostSender[2]);
-    }));
-    test("(1.4)add new post", () => __awaiter(void 0, void 0, void 0, function* () {
-        const response = yield (0, supertest_1.default)(server_1.default).post('/post').send({
-            "message": newPostMessage[3],
-            "sender": newPostSender[3]
-        });
-        expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(newPostMessage[3]);
-        expect(response.body.sender).toEqual(newPostSender[3]);
         test_id = response.body._id;
     }));
     test("(2)Get all posts", () => __awaiter(void 0, void 0, void 0, function* () {
@@ -72,14 +56,33 @@ describe("Post Tests:", () => {
     test("(3)Get post by id", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).get('/post/' + test_id);
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(newPostMessage[3]);
-        expect(response.body.sender).toEqual(newPostSender[3]);
+        expect(response.body.message).toEqual(newPostMessage[1]);
+        expect(response.body.sender).toEqual(newPostSender[1]);
     }));
-    test("(4)update post", () => __awaiter(void 0, void 0, void 0, function* () {
+    test("(3.0)Get post by id - invalid id", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).get('/post/' + test_id);
         expect(response.statusCode).toEqual(200);
-        expect(response.body.message).toEqual(newPostMessage[3]);
-        expect(response.body.sender).toEqual(newPostSender[3]);
+        expect(response.body.message).toEqual(newPostMessage[1]);
+        expect(response.body.sender).toEqual(newPostSender[1]);
+    }));
+    test("(4)update post", () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(server_1.default).put('/post/' + test_id).send({
+            "message": updatedPostMessage,
+        });
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.message).toEqual(updatedPostMessage);
+        expect(response.body.sender).toEqual(newPostSender[1]);
+        response = yield (0, supertest_1.default)(server_1.default).get('/post/' + test_id);
+        expect(response.statusCode).toEqual(200);
+        expect(response.body.message).toEqual(updatedPostMessage);
+        expect(response.body.sender).toEqual(newPostSender[1]);
+    }));
+    test("(4.0)update post - invalid id", () => __awaiter(void 0, void 0, void 0, function* () {
+        let response = yield (0, supertest_1.default)(server_1.default).put('/post/' + wrongPostId).send({
+            "message": updatedPostMessage,
+            "sender": newPostSender[4]
+        });
+        expect(response.statusCode).toEqual(400);
     }));
 });
 //# sourceMappingURL=post.test.js.map

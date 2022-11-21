@@ -18,7 +18,7 @@ const getAllPosts = async (req:Request ,res:Response) =>{
 }
 const getPost = async (req:Request ,res:Response) =>{}
 const getPostById = async (req:Request ,res:Response) =>{
-    console.log(req.params.id)
+    //console.log(req.params.id)
     const post = await Post.findById(req.params.id)
     res.status(200).send(post)
 }

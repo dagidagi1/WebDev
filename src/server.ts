@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import postRouter from './routes/postRoutes'
+import authRouter from './routes/authRoutes'
 import dotenv from 'dotenv'
 dotenv.config()
 const app = express()
@@ -16,4 +17,5 @@ db.once('open', ()=> {console.log('connected to mongo!')})
 
 app.use('/pub', express.static('public'))
 app.use('/post', postRouter)
+app.use('/auth', authRouter)
 export = app
