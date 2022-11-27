@@ -21,11 +21,28 @@ function sendError(res, error) {
         'message': error
     });
 }
+const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = req.headers['authorization'];
+    if (authHeader == null || authHeader == undefined)
+        return sendError(res, 'authentication header is missing!');
+    const token = authHeader.split(' ')[1];
+    if (token == null)
+        return sendError(res, 'Authenticator missing');
+    try {
+        const usr = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        //TODO: fix ts types
+        //req.userId = usr._id
+        console.log(usr._id);
+        next();
+    }
+    catch (err) {
+        return sendError(res, 'failed to validate token!');
+    }
+});
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("register!");
     const email = req.body.email;
     const pass = req.body.password;
-    //console.log(req.body.email, pass)
     if (email == null || pass == null) {
         return sendError(res, 'Please provide email and password!');
     }
@@ -79,5 +96,5 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         'message': 'not implemented'
     });
 });
-module.exports = { login, register, logout };
+module.exports = { login, register, logout, authenticateMiddleware };
 //# sourceMappingURL=auth.js.map

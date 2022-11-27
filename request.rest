@@ -8,6 +8,7 @@ GET http://localhost:3000/post/123
 ###
 ###
 POST http://localhost:3000/post
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzgzNDkzN2ZkODFhOGY1NTcwMjU0ZmUiLCJpYXQiOjE2Njk1NTExMDYsImV4cCI6MTY2OTU1NDcwNn0._5jwhlyQAvUe6hgfWIfoB5HTyomokz5d6o5-adlTf1I
 Content-Type: application/json
 
 {
@@ -17,9 +18,20 @@ Content-Type: application/json
 ###
 ###
 POST http://localhost:3000/auth/register
+Content-Type: application/json
 
 {
-    "email": "usr@usr.usr", 
+    "email": "us1qr@usr.usr", 
+    "password": "12345"
+}
+###
+
+###
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "us1qr@usr.usr", 
     "password": "12345"
 }
 ###
