@@ -31,7 +31,7 @@ const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, voi
     try {
         const usr = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
         //TODO: fix ts types
-        //req.userId = usr._id
+        req.body.usrId = usr._id;
         console.log(usr._id);
         next();
     }
@@ -84,17 +84,76 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!match)
             return sendError(res, 'bad email or pass');
         const accessToken = yield jsonwebtoken_1.default.sign({ '_id': user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.JWT_TOKEN_EXPIRATION });
-        res.status(200).send({ 'accessToken': accessToken });
+        const refreshToken = yield jsonwebtoken_1.default.sign({ '_id': user._id }, process.env.REFRESH_TOKEN_SECRET);
+        if (user.refresh_tokens == null)
+            user.refresh_tokens = [refreshToken];
+        else
+            user.refresh_tokens.push(refreshToken);
+        yield user.save();
+        res.status(200).send({
+            'accessToken': accessToken,
+            'refreshToken': refreshToken
+        });
     }
     catch (err) {
-        return sendError(res, err);
+        return sendError(res, err.message);
     }
 });
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(400).send({
-        'status': 'fail',
-        'message': 'not implemented'
-    });
+    console.log("Log out");
+    const authHeader = req.headers['authorization'];
+    if (authHeader == null || authHeader == undefined)
+        return sendError(res, 'authentication header is missing!');
+    const ref_token = authHeader.split(' ')[1];
+    if (ref_token == null)
+        return sendError(res, 'Authenticator missing');
+    try {
+        const usr = yield jsonwebtoken_1.default.verify(ref_token, process.env.REFRESH_TOKEN_SECRET);
+        const usrObj = yield user_model_1.default.findById(usr._id);
+        if (usrObj == null)
+            return sendError(res, 'invalid validating token');
+        if (!usrObj.refresh_tokens.includes(ref_token)) {
+            usrObj.refresh_tokens = [];
+            yield usrObj.save();
+            return sendError(res, 'invalid validating token');
+        }
+        usrObj.refresh_tokens.splice(usrObj.refresh_tokens.indexOf(ref_token), 1);
+        yield usrObj.save();
+        res.status(200).send();
+    }
+    catch (err) {
+        return sendError(res, err.message);
+    }
 });
-module.exports = { login, register, logout, authenticateMiddleware };
+const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = req.headers['authorization'];
+    if (authHeader == null || authHeader == undefined)
+        return sendError(res, 'authentication header is missing!');
+    const ref_token = authHeader.split(' ')[1];
+    if (ref_token == null)
+        return sendError(res, 'Authenticator missing');
+    try {
+        const usr = yield jsonwebtoken_1.default.verify(ref_token, process.env.REFRESH_TOKEN_SECRET);
+        const usrObj = yield user_model_1.default.findById(usr._id);
+        if (usrObj == null)
+            return sendError(res, 'invalid validating token');
+        if (!usrObj.refresh_tokens.includes(ref_token)) {
+            usrObj.refresh_tokens = [];
+            yield usrObj.save();
+            return sendError(res, 'invalid validating token');
+        }
+        const newAccessToken = yield jsonwebtoken_1.default.sign({ '_id': usr._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.JWT_TOKEN_EXPIRATION });
+        const newRefreshToken = yield jsonwebtoken_1.default.sign({ '_id': usr._id }, process.env.REFRESH_TOKEN_SECRET);
+        usrObj.refresh_tokens[usrObj.refresh_tokens.indexOf(ref_token)];
+        yield usrObj.save();
+        res.status(200).send({
+            'accessToken': newAccessToken,
+            'refreshToken': newRefreshToken
+        });
+    }
+    catch (err) {
+        sendError(res, err.message);
+    }
+});
+module.exports = { login, register, logout, refresh, authenticateMiddleware };
 //# sourceMappingURL=auth.js.map

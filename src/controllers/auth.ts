@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 //import { Express } from 'express'
 import { NextFunction, Request, Response } from 'express'
+import user_model from '../models/user_model'
 //import { response } from '../server'
 function sendError(res:Response,error:String){
     res.status(400).send({
@@ -10,6 +11,7 @@ function sendError(res:Response,error:String){
         'message': error
     })
 }
+
 const authenticateMiddleware = async (req:Request, res:Response, next:NextFunction) => {
     const authHeader = req.headers['authorization']
     if(authHeader == null || authHeader == undefined) return sendError(res, 'authentication header is missing!')
@@ -18,7 +20,7 @@ const authenticateMiddleware = async (req:Request, res:Response, next:NextFuncti
     try{
         const usr = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
         //TODO: fix ts types
-        //req.userId = usr._id
+        req.body.usrId = usr._id
         console.log(usr._id)
         next()
     }catch(err){ return sendError(res, 'failed to validate token!')}
@@ -69,15 +71,72 @@ const login = async (req:Request ,res:Response) =>{
             process.env.ACCESS_TOKEN_SECRET, 
             {expiresIn: process.env.JWT_TOKEN_EXPIRATION}
         )
-        res.status(200).send({'accessToken': accessToken})
+        const refreshToken = await jwt.sign(
+            {'_id':user._id},
+            process.env.REFRESH_TOKEN_SECRET
+        )
+        if(user.refresh_tokens == null) user.refresh_tokens = [refreshToken]
+        else user.refresh_tokens.push(refreshToken)
+        await user.save()
+        res.status(200).send({
+            'accessToken': accessToken,
+            'refreshToken': refreshToken
+        })
     }catch(err){
-        return sendError(res, err)
+        return sendError(res, err.message)
     }
 }
 const logout = async (req:Request ,res:Response) =>{
-    res.status(400).send({
-        'status': 'fail',
-        'message':'not implemented'
-    })
+    console.log("Log out")
+    const authHeader = req.headers['authorization']
+    if(authHeader == null || authHeader == undefined) return sendError(res, 'authentication header is missing!')
+    const ref_token = authHeader.split(' ')[1]
+    if(ref_token == null) return sendError(res, 'Authenticator missing')
+    try{
+        const usr = await jwt.verify(ref_token, process.env.REFRESH_TOKEN_SECRET)
+        const usrObj = await User.findById(usr._id)
+        if(usrObj == null) return sendError(res, 'invalid validating token')
+
+        if(!usrObj.refresh_tokens.includes(ref_token)){
+            usrObj.refresh_tokens = []
+            await usrObj.save()
+            return sendError(res, 'invalid validating token')
+        }
+        usrObj.refresh_tokens.splice(usrObj.refresh_tokens.indexOf(ref_token), 1)
+        await usrObj.save()
+        res.status(200).send()
+    }catch(err){return sendError(res, err.message)}
 }
-export = {login, register, logout, authenticateMiddleware}
+const refresh =async (req:Request, res:Response) => {
+    const authHeader = req.headers['authorization']
+    if(authHeader == null || authHeader == undefined) return sendError(res, 'authentication header is missing!')
+    const ref_token = authHeader.split(' ')[1]
+    if(ref_token == null) return sendError(res, 'Authenticator missing')
+    try{
+        const usr = await jwt.verify(ref_token, process.env.REFRESH_TOKEN_SECRET)
+        const usrObj = await User.findById(usr._id)
+        if(usrObj == null) return sendError(res, 'invalid validating token')
+
+        if(!usrObj.refresh_tokens.includes(ref_token)){
+            usrObj.refresh_tokens = []
+            await usrObj.save()
+            return sendError(res, 'invalid validating token')
+        }
+        const newAccessToken = await jwt.sign(
+            {'_id':usr._id},
+            process.env.ACCESS_TOKEN_SECRET, 
+            {expiresIn: process.env.JWT_TOKEN_EXPIRATION}
+        )
+        const newRefreshToken = await jwt.sign(
+            {'_id':usr._id},
+            process.env.REFRESH_TOKEN_SECRET
+        )
+        usrObj.refresh_tokens[usrObj.refresh_tokens.indexOf(ref_token)]
+        await usrObj.save()
+        res.status(200).send({
+            'accessToken': newAccessToken,
+            'refreshToken': newRefreshToken
+        })
+    }catch(err){sendError(res,err.message)}
+}
+export = {login, register, logout, refresh,  authenticateMiddleware}
