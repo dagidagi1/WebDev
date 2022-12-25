@@ -8,11 +8,11 @@ GET http://localhost:3000/post/123
 ###
 ###
 POST http://localhost:3000/post
-Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzgzNDkzN2ZkODFhOGY1NTcwMjU0ZmUiLCJpYXQiOjE2Njk1NTExMDYsImV4cCI6MTY2OTU1NDcwNn0._5jwhlyQAvUe6hgfWIfoB5HTyomokz5d6o5-adlTf1I
+Authorization: jwt eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2M2E4NTYyY2E4OGQ2MzNkMmNlMjY1MzMiLCJpYXQiOjE2NzE5NzY3MzQsImV4cCI6MTY3MTk4MDMzNH0.qDEfW3sRN-UcLtHaSviWMmsL6h14unKnC-8ruYLL3wU
 Content-Type: application/json
 
 {
-    "message": "this is my new message2", 
+    "message": "this is my new message222", 
     "sender" : "123"
 }
 ###
@@ -21,7 +21,7 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-    "email": "us1qr@usr.usr", 
+    "email": "uaas1qr@usr.usr", 
     "password": "12345"
 }
 ###
@@ -31,7 +31,7 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "email": "us1qr@usr.usr", 
+    "email": "uaas1qr@usr.usr", 
     "password": "12345"
 }
 ###
