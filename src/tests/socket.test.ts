@@ -7,13 +7,14 @@ import request from 'supertest'
 import Post from '../models/post_model'
 import User from '../models/user_model'
 import { isAccessor } from "typescript"
-const userEmail = 'tester1'
-const userPass = '123456789'
+const userEmail = ['tester1', 'tester2']
+const userPass = ['123456789','123123123']
 let postId = ''
 let postSender = ''
 const postMessage = 'this is my message'
 let token = ''
 type Client = {
+    id: string,
     'socket': Socket<DefaultEventsMap, DefaultEventsMap>,
     'accessToken': String
 }
@@ -30,6 +31,7 @@ const connect_user = async (userEmail, userPass, token) => {
         "email": userEmail,
         "password": userPass
     })
+    const usrId = res.body._id
     const response = await request(server).post('/auth/login').send({
         "email": userEmail,
         "password": userPass
@@ -41,30 +43,22 @@ const connect_user = async (userEmail, userPass, token) => {
         }
     })
     await clientSocketConnect(clientSocket)
-    const client = { 'socket': clientSocket, 'accessToken': token }
+    const client = { 'socket': clientSocket, 'accessToken': token ,'id': usrId}
     return client
 }
 describe("my awesome project", () => {
     beforeAll(async () => {
         await Post.remove()
         await User.remove()
-        Client1 = await connect_user(userEmail, userPass, token)
+        Client1 = await connect_user(userEmail[0], userPass[0], token)
+        Client2 = await connect_user(userEmail[1], userPass[1], token)
     })
     afterAll(() => {
         server.close()
-        clientSocket.close()
+        Client1.socket.close()
+        Client2.socket.close()
         mongoose.connection.close()
     })
-    // test("should work", (done) => {
-    //     clientSocket.onAny((eventName, arg) => {
-    //         console.log("on any")
-    //         expect(eventName).toBe('echo:echo')
-    //         expect(arg.msg).toBe('hello')
-    //         clientSocket.removeAllListeners()
-    //         done()
-    //     })
-    //     clientSocket.emit("echo:echo", { 'msg': 'hello' })
-    // })
     test("postAdd", (done) => {
         clientSocket.on('post:add.response', (arg) => {
             expect(arg.message).toEqual(postMessage)
@@ -92,11 +86,39 @@ describe("my awesome project", () => {
     test("get post by sender", (done) => {
         clientSocket.on('post:get:sender.response', (args) => {
             expect(args).not.toBe(null)
-            console.log("args: ", args)
             expect(args[0].message).toEqual(postMessage)
             done()
         })
         clientSocket.emit("post:get:sender", {'sender': postSender})
     })
     //jest.setTimeout(15000)
+    test("Test chat messages from 1 client", (done) => {
+        const msg = "Hi.... Test123"
+        Client2.socket.once("chat:message", (args)=>{
+            expect(args.to).toBe(Client2.id)
+            expect(args.message).toBe(msg)
+            expect(args.from).toBe(Client1.id)
+            done()
+        })
+        Client1.socket.emit("chat:send_message", {"to": Client2.id, "message": msg})
+    })
+
+    test("Test chat messages from 2 client", (done) => {
+        const msg = "Hi.... Test123"
+        Client1.socket.once("chat:message", (args)=>{
+            expect(args.to).toBe(Client1.id)
+            expect(args.message).toBe(msg)
+            expect(args.from).toBe(Client2.id)
+            done()
+        })
+        Client2.socket.emit("chat:send_message", {"to": Client1.id, "message": msg})
+    })
+
+    test("Test get messages", (done) => {
+        Client1.socket.once("chat:get_messages.response", (args)=>{
+            expect(args.length).toBe(2)
+            done()
+        })
+        Client1.socket.emit("chat:get_messages", {"id": Client2.id})
+    })
 })

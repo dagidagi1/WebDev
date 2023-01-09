@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const socket_io_1 = require("socket.io");
 const echoHandler_1 = __importDefault(require("./socket/events/echoHandler"));
 const postHandler_1 = __importDefault(require("./socket/events/postHandler"));
+const chatHandler_1 = __importDefault(require("./socket/events/chatHandler"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 module.exports = (server) => {
     const io = new socket_io_1.Server(server);
@@ -36,8 +37,8 @@ module.exports = (server) => {
         console.log('a user connected ' + socket.id);
         (0, echoHandler_1.default)(io, socket);
         (0, postHandler_1.default)(io, socket);
-        // chatHandler(io, socket)
-        // await socket.join(socket.data.user)
+        (0, chatHandler_1.default)(io, socket);
+        yield socket.join(socket.data.user);
     }));
     return io;
 };
