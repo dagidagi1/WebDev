@@ -44,6 +44,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     const pass = req.body.password;
     if (email == null || pass == null) {
+        console.log("No pass or email");
         return sendError(res, 'Please provide email and password!');
     }
     try {
@@ -60,7 +61,10 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const encryptedPassword = yield bcrypt_1.default.hash(pass, salt);
         let newUser = new user_model_1.default({
             'email': email,
-            'password': encryptedPassword
+            'password': encryptedPassword,
+            'phone': req.body.phone,
+            'name': req.body.name,
+            'img': req.body.img
         });
         newUser = yield newUser.save();
         res.status(200).send(newUser);

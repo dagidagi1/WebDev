@@ -32,14 +32,20 @@ describe("Auth Tests:", () => {
     test("Register - new user", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
             "email": newUserEmail,
-            "password": NewUserPassword
+            "password": NewUserPassword,
+            "phone": "123",
+            "name": "123",
+            "img": "123"
         });
         expect(response.statusCode).toEqual(200);
     }));
     test("Register - exist user", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
             "email": newUserEmail,
-            "password": NewUserPassword
+            "password": NewUserPassword,
+            "phone": "123",
+            "name": "123",
+            "img": "123"
         });
         expect(response.statusCode).toEqual(400);
     }));

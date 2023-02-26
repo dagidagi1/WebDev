@@ -12,6 +12,18 @@ const userSchema = new mongoose.Schema({
     },
     refresh_tokens:{
         type:[String]
+    },
+    phone:{
+        type:String,
+        required: true
+    },
+    name: {
+        type:String,
+        required: true
+    },
+    img: {
+        type:String,
+        required: true
     }
 })
 

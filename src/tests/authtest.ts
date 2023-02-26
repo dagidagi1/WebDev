@@ -23,14 +23,20 @@ describe("Auth Tests:",()=> {
     test("Register - new user", async() =>{ //DONE
         const response = await request(app).post('/auth/register').send({
                          "email": newUserEmail,
-                         "password": NewUserPassword
+                         "password": NewUserPassword,
+                         "phone": "123",
+                         "name": "123",
+                         "img": "123"
                      })
         expect(response.statusCode).toEqual(200)
         })
     test("Register - exist user", async() =>{ //DONE
         const response = await request(app).post('/auth/register').send({
             "email": newUserEmail,
-            "password": NewUserPassword
+            "password": NewUserPassword,
+            "phone": "123",
+            "name": "123",
+            "img": "123"
         })
     expect(response.statusCode).toEqual(400)
     })
