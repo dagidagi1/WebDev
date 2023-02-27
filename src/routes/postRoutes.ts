@@ -9,6 +9,7 @@
 import express from 'express'
 import MyRequest from '../common/MyRequest'
 import auth from '../controllers/auth'
+
 const router = express.Router()
 
 import post from '../controllers/post'
@@ -101,15 +102,17 @@ router.get('/:id', auth.authenticateMiddleware, async (req, res) => {
 })
 router.put('/:id', auth.authenticateMiddleware, async(req,res) => {
     try {
+        console.log("PUT: post/id")
         const response = await post.updatePostById(MyRequest.fromRestRequest(req))
         response.sendRestResponse(res)
     } catch (err) {
-        res.status(400).send({
+        res.status(401).send({
             'status': 'fail',
             'message': err.message
         })
     }
 })
+
 router.post('/', auth.authenticateMiddleware, async (req, res) => {
     try {
         const response = await post.addPostM(MyRequest.fromRestRequest(req))

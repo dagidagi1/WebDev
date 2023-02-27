@@ -7,6 +7,8 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const postRoutes_1 = __importDefault(require("./routes/postRoutes"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
+const fileRoutes_1 = __importDefault(require("./routes/fileRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
@@ -22,6 +24,9 @@ db.once('open', () => { console.log('connected to mongo!'); });
 app.use('/pub', express_1.default.static('public'));
 app.use('/post', postRoutes_1.default);
 app.use('/auth', authRoutes_1.default);
+app.use('/file', fileRoutes_1.default);
+app.use('/upload_files', express_1.default.static('upload_files'));
+app.use('/usr', userRoutes_1.default);
 if (process.env.NODE_ENV == "development") {
     const options = {
         definition: {

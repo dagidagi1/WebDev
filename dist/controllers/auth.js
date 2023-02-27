@@ -30,9 +30,7 @@ const authenticateMiddleware = (req, res, next) => __awaiter(void 0, void 0, voi
         return sendError(res, 'Authenticator missing');
     try {
         const usr = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        //TODO: fix ts types
         req.body.usrId = usr._id;
-        console.log(usr._id);
         next();
     }
     catch (err) {
@@ -96,7 +94,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         yield user.save();
         res.status(200).send({
             'accessToken': accessToken,
-            'refreshToken': refreshToken
+            'refreshToken': refreshToken,
+            'id': user._id // TODO : add to tests.
         });
     }
     catch (err) {

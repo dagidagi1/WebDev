@@ -11,7 +11,7 @@ class MyResponse {
         if (this.err == null) {
             res.status(200).send({
                 'status': 'ok',
-                'post': this.body
+                'data': this.body
             })
         } else {
             res.status(this.err.code).send({

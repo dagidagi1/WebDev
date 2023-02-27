@@ -112,11 +112,12 @@ router.get('/:id', auth_1.default.authenticateMiddleware, (req, res) => __awaite
 }));
 router.put('/:id', auth_1.default.authenticateMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("PUT: post/id");
         const response = yield post_1.default.updatePostById(MyRequest_1.default.fromRestRequest(req));
         response.sendRestResponse(res);
     }
     catch (err) {
-        res.status(400).send({
+        res.status(401).send({
             'status': 'fail',
             'message': err.message
         });

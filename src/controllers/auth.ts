@@ -19,9 +19,7 @@ const authenticateMiddleware = async (req:Request, res:Response, next:NextFuncti
     if(token == null) return sendError(res, 'Authenticator missing')
     try{
         const usr = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        //TODO: fix ts types
         req.body.usrId = usr._id
-        console.log(usr._id)
         next()
     }catch(err){ return sendError(res, 'failed to validate token!')}
 
@@ -85,7 +83,8 @@ const login = async (req:Request ,res:Response) =>{
         await user.save()
         res.status(200).send({
             'accessToken': accessToken,
-            'refreshToken': refreshToken
+            'refreshToken': refreshToken,
+            'id': user._id // TODO : add to tests.
         })
     }catch(err){
         return sendError(res, err.message)

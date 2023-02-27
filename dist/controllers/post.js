@@ -62,26 +62,36 @@ const getAllM = (req) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 const addPostM = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    const msg = req.body.message;
-    const sender = req.userId;
+    // const msg = req.body.message
+    // const sender = req.userId
+    // const post = new Post({
+    //     message: msg,
+    //     sender: sender
+    // })
+    // try {
+    //     const newPost = await post.save()
+    //     return new MyResponse(newPost, req.userId, null)
+    // } catch (err) {
+    //     return new MyResponse(null, req.userId, new MyError(400, err.message))
+    // }
     const post = new post_model_1.default({
-        message: msg,
-        sender: sender
+        txt: req.body.txt,
+        usrId: req.body.usrId,
+        imgUri: req.body.img
     });
     try {
         const newPost = yield post.save();
-        return new MyResponse_1.default(newPost, req.userId, null);
+        return new MyResponse_1.default(newPost, newPost.usrId, null);
     }
     catch (err) {
         return new MyResponse_1.default(null, req.userId, new MyError_1.default(400, err.message));
     }
 });
 const addPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const req_message = req.body.message;
-    const req_sender = req.body.sender;
     const post = new post_model_1.default({
-        message: req_message,
-        sender: req_sender
+        txt: req.body.txt,
+        usrId: req.body.usrId,
+        imgUri: req.body.img
     });
     try {
         const newPost = yield post.save();
@@ -104,11 +114,27 @@ const putPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 const updatePostById = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("REQ: " + JSON.stringify(req));
+    // let newPost
+    // try {
+    //     console.log("REQ DATA: ", req.params.id)
+    //     newPost = await Post.findById(req.body.id)
+    //     console.log("Found Post: ", newPost)
+    //     if (req.body?.imgUri)
+    //         newPost.imgUri = req.body.imgUri
+    //     if (req.body?.txt)
+    //         newPost.txt = req.body.txt
+    //         console.log("After Fix: ", newPost)
+    // }catch(err){
+    //     console.log("CATCH 1: ",err)
+    // }
     try {
-        const post = yield post_model_1.default.findByIdAndUpdate(req.body.id, req.body, { new: true });
+        const post = yield post_model_1.default.findByIdAndUpdate(req.body.params.id, req.body.params, { new: true });
+        console.log("POST DB UPDATE: ", post);
         return new MyResponse_1.default(post, req.userId, null);
     }
     catch (err) {
+        console.log("Catch: ", err);
         return new MyResponse_1.default(null, req.userId, new MyError_1.default(400, err.message));
     }
 });

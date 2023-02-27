@@ -4,11 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const mongoose_1 = __importDefault(require("mongoose"));
 const postSchema = new mongoose_1.default.Schema({
-    message: {
+    txt: {
         type: String,
         required: true
     },
-    sender: {
+    usrId: {
+        type: String,
+        required: true
+    },
+    imgUri: {
         type: String,
         required: true
     }

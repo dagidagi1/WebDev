@@ -35,3 +35,4 @@ Content-Type: application/json
     "password": "12345"
 }
 ###
+POST http://localhost:3000/file/

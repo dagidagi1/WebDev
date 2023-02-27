@@ -3,6 +3,8 @@ import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
 import postRouter from './routes/postRoutes'
 import authRouter from './routes/authRoutes'
+import fileRouter from './routes/fileRoutes'
+import userRouter from './routes/userRoutes'
 import dotenv from 'dotenv'
 import swaggerUI from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
@@ -24,6 +26,9 @@ db.once('open', ()=> {console.log('connected to mongo!')})
 app.use('/pub', express.static('public'))
 app.use('/post', postRouter)
 app.use('/auth', authRouter)
+app.use('/file', fileRouter)
+app.use('/upload_files', express.static('upload_files'))
+app.use('/usr', userRouter)
 if (process.env.NODE_ENV == "development") {
     const options = {
     definition: {

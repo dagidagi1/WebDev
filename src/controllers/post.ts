@@ -4,6 +4,7 @@ import { Request, Response } from 'express'
 import MyResponse from '../common/MyResponse'
 import MyError from '../common/MyError'
 import MyRequest from '../common/MyRequest'
+
 const getAllPosts = async (req: Request, res: Response) => {
     let posts = {}
     try {
@@ -29,7 +30,7 @@ const getPostById = async (req) => {
     try {
         const post = await Post.findById(req.body.id)
         console.log("post: ", post)
-        return new MyResponse(post,req.userId,null)
+        return new MyResponse(post, req.userId, null)
     } catch (err) {
         return new MyResponse(null, req.userId, new MyError(400, err.message))
     }
@@ -43,32 +44,42 @@ const getAllM = async (req) => {
         else {
             posts = await Post.find({ 'sender': req.body.bySender })
         }
-        return new MyResponse(posts,req.userId,null)
+        return new MyResponse(posts, req.userId, null)
 
     } catch (err) {
         return new MyResponse(null, req.userId, new MyError(400, err.message))
     }
 }
 const addPostM = async (req) => {
-    const msg = req.body.message
-    const sender = req.userId
+    // const msg = req.body.message
+    // const sender = req.userId
+    // const post = new Post({
+    //     message: msg,
+    //     sender: sender
+    // })
+    // try {
+    //     const newPost = await post.save()
+    //     return new MyResponse(newPost, req.userId, null)
+    // } catch (err) {
+    //     return new MyResponse(null, req.userId, new MyError(400, err.message))
+    // }
     const post = new Post({
-        message: msg,
-        sender: sender
+        txt: req.body.txt,
+        usrId: req.body.usrId,
+        imgUri: req.body.img
     })
     try {
         const newPost = await post.save()
-        return new MyResponse(newPost, req.userId, null)
+        return new MyResponse(newPost, newPost.usrId, null)
     } catch (err) {
         return new MyResponse(null, req.userId, new MyError(400, err.message))
     }
 }
 const addPost = async (req: Request, res: Response) => {
-    const req_message = req.body.message
-    const req_sender = req.body.sender
     const post = new Post({
-        message: req_message,
-        sender: req_sender
+        txt: req.body.txt,
+        usrId: req.body.usrId,
+        imgUri: req.body.img
     })
     try {
         const newPost = await post.save()
@@ -82,6 +93,7 @@ const addPost = async (req: Request, res: Response) => {
     }
 }
 const putPostById = async (req: Request, res: Response) => {
+    
     try {
         const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true })
         res.status(200).send(post)
@@ -91,11 +103,27 @@ const putPostById = async (req: Request, res: Response) => {
     }
 }
 const updatePostById = async (req) => {
-    try {
-        const post = await Post.findByIdAndUpdate(req.body.id, req.body, { new: true })
+    console.log("REQ: " + JSON.stringify(req))
+    // let newPost
+    // try {
+    //     console.log("REQ DATA: ", req.params.id)
+    //     newPost = await Post.findById(req.body.id)
+    //     console.log("Found Post: ", newPost)
+    //     if (req.body?.imgUri)
+    //         newPost.imgUri = req.body.imgUri
+    //     if (req.body?.txt)
+    //         newPost.txt = req.body.txt
+    //         console.log("After Fix: ", newPost)
+    // }catch(err){
+    //     console.log("CATCH 1: ",err)
+    // }
+    try{
+        const post = await Post.findByIdAndUpdate(req.body.params.id, req.body.params, { new: true })
+        console.log("POST DB UPDATE: ", post)
         return new MyResponse(post, req.userId, null)
     }
-    catch(err) {
+    catch (err) {
+        console.log("Catch: ", err)
         return new MyResponse(null, req.userId, new MyError(400, err.message))
     }
 }
