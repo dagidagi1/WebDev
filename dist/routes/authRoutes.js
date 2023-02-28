@@ -127,7 +127,7 @@ router.post('/register', auth_1.default.register);
 *                       schema:
 *                           $ref: '#/components/schemas/User'
 */
-router.post('/logout', auth_1.default.authenticateMiddleware, auth_1.default.logout);
+router.post('/logout', auth_1.default.logout);
 /**
 * @swagger
 * /auth/register:

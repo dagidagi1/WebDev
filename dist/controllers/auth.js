@@ -123,6 +123,7 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         usrObj.refresh_tokens.splice(usrObj.refresh_tokens.indexOf(ref_token), 1);
         yield usrObj.save();
         res.status(200).send();
+        console.log("LOG OUT : 200");
     }
     catch (err) {
         return sendError(res, err.message);

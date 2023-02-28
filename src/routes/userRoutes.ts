@@ -3,31 +3,28 @@ import MyRequest from '../common/MyRequest'
 import auth from '../controllers/auth'
 import { Request } from 'express'
 const router = express.Router()
-import {getUserById} from '../controllers/user'
+import {getUserById, updateUserById} from '../controllers/user'
 import post from '../controllers/post'
+import user_model from '../models/user_model'
 
 router.get('/', async (req:Request, res) => {
-    //console.log("router/usr/:id "+ req)
-    // try {
-    //     const response = await getUserById(MyRequest.fromRestRequest(req))
-    //     //console.log("Res: ",res)
-    //     response.sendRestResponse(res)
-    // } catch (err) {
-    //     //console.log("ERR: ",err)
-    //     console.log(err.message)
-    //     res.status(400).send({
-    //         'status': 'fail',
-    //         'message': err.message
-    //     })
-    // }
     try {
         const response = await getUserById(req)
-        //console.log("Res: ",res)
         response.sendRestResponse(res)
     } catch (err) {
-        //console.log("ERR: ",err)
-        //console.log(err.message)
         res.status(400).send({
+            'status': 'fail',
+            'message': err.message
+        })
+    }
+})
+router.put('/:id', auth.authenticateMiddleware, async(req,res) => {
+    try {
+        console.log("PUT: user/id")
+        const response = await updateUserById(MyRequest.fromRestRequest(req))
+        response.sendRestResponse(res)
+    } catch (err) {
+        res.status(401).send({
             'status': 'fail',
             'message': err.message
         })

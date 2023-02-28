@@ -126,7 +126,7 @@ router.post('/register', auth.register)
 *                       schema:
 *                           $ref: '#/components/schemas/User'
 */
-router.post('/logout',auth.authenticateMiddleware, auth.logout)
+router.post('/logout', auth.logout)
 /**
 * @swagger
 * /auth/register:

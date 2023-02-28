@@ -109,6 +109,7 @@ const logout = async (req:Request ,res:Response) =>{
         usrObj.refresh_tokens.splice(usrObj.refresh_tokens.indexOf(ref_token), 1)
         await usrObj.save()
         res.status(200).send()
+        console.log("LOG OUT : 200")
     }catch(err){return sendError(res, err.message)}
 }
 const refresh =async (req:Request, res:Response) => {

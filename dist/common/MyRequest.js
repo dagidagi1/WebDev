@@ -12,6 +12,7 @@ class MyRequest {
         const ret = new MyRequest(req.body, req.body.sender);
         ret.body['id'] = req.params.id;
         ret.body['bySender'] = req.query.sender;
+        ret.body;
         return ret;
     }
 }

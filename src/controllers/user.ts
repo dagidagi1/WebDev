@@ -11,11 +11,25 @@ const getUserById = async (req) => {
             name: usr.name,
             email: usr.email,
             img: usr.img,
-            id: usr.id
+            id: usr.id,
+            phone: usr.phone
         }
         return new MyResponse(newUsr, req.id, null)
     } catch (err) {
         return new MyResponse(null, req.id, new MyError(400, err.message))
     }
 }
-export { getUserById }
+const updateUserById = async (req) => {
+    console.log("REQQ: " + JSON.stringify(req))
+    try{
+        console.log("ID: ", req.body.id)
+        const user = await User.findByIdAndUpdate(req.body.usrId, req.body.params, { new: true })
+        console.log("USER DB UPDATE: ", user)
+        return new MyResponse(user, req.userId, null)
+    }
+    catch (err) {
+        console.log("Catch: ", err)
+        return new MyResponse(null, req.userId, new MyError(400, err.message))
+    }
+}
+export { getUserById, updateUserById }

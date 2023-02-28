@@ -104,19 +104,6 @@ const putPostById = async (req: Request, res: Response) => {
 }
 const updatePostById = async (req) => {
     console.log("REQ: " + JSON.stringify(req))
-    // let newPost
-    // try {
-    //     console.log("REQ DATA: ", req.params.id)
-    //     newPost = await Post.findById(req.body.id)
-    //     console.log("Found Post: ", newPost)
-    //     if (req.body?.imgUri)
-    //         newPost.imgUri = req.body.imgUri
-    //     if (req.body?.txt)
-    //         newPost.txt = req.body.txt
-    //         console.log("After Fix: ", newPost)
-    // }catch(err){
-    //     console.log("CATCH 1: ",err)
-    // }
     try{
         const post = await Post.findByIdAndUpdate(req.body.params.id, req.body.params, { new: true })
         console.log("POST DB UPDATE: ", post)
