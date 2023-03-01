@@ -71,6 +71,8 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return sendError(res, err);
     }
 });
+const passEncrypt = (pass) => __awaiter(void 0, void 0, void 0, function* () {
+});
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Login!');
     const email = req.body.email;
@@ -159,5 +161,5 @@ const refresh = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         sendError(res, err.message);
     }
 });
-module.exports = { login, register, logout, refresh, authenticateMiddleware };
+module.exports = { login, register, logout, refresh, authenticateMiddleware, passEncrypt };
 //# sourceMappingURL=auth.js.map

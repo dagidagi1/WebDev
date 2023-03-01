@@ -1,6 +1,7 @@
 import User from '../models/user_model'
 import MyResponse from '../common/MyResponse'
 import MyError from '../common/MyError'
+import bcrypt from 'bcrypt'
 
 const getUserById = async (req) => {
     try {
@@ -21,8 +22,12 @@ const getUserById = async (req) => {
 }
 const updateUserById = async (req) => {
     console.log("REQQ: " + JSON.stringify(req))
-    try{
+    try {
         console.log("ID: ", req.body.id)
+        if (req.body.params.password) {
+            const salt = await bcrypt.genSalt(10)
+            req.body.params.password = await bcrypt.hash(req.body.params.password, salt)
+        }
         const user = await User.findByIdAndUpdate(req.body.usrId, req.body.params, { new: true })
         console.log("USER DB UPDATE: ", user)
         return new MyResponse(user, req.userId, null)

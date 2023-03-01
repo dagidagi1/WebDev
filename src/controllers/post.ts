@@ -93,7 +93,7 @@ const addPost = async (req: Request, res: Response) => {
     }
 }
 const putPostById = async (req: Request, res: Response) => {
-    
+
     try {
         const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true })
         res.status(200).send(post)
@@ -104,7 +104,7 @@ const putPostById = async (req: Request, res: Response) => {
 }
 const updatePostById = async (req) => {
     console.log("REQ: " + JSON.stringify(req))
-    try{
+    try {
         const post = await Post.findByIdAndUpdate(req.body.params.id, req.body.params, { new: true })
         console.log("POST DB UPDATE: ", post)
         return new MyResponse(post, req.userId, null)
@@ -114,4 +114,17 @@ const updatePostById = async (req) => {
         return new MyResponse(null, req.userId, new MyError(400, err.message))
     }
 }
-export = { getAllPosts, getPost, addPost, getPostById, putPostById, getAllM, addPostM, updatePostById }
+const deletePost = async (req) => {
+    try {
+        const postId = req.body.params.id
+        const result = await Post.deleteOne({ "_id": postId })
+        if (result.deletedCount == 1)
+            return new MyResponse(null, req.userId, null)
+        return new MyResponse(null, req.userId, new MyError(400, "Post doesn't exist"))
+    }
+    catch (err) {
+        return new MyResponse(null, req.userId, new MyError(400, err.message))
+    }
+
+}
+export = { deletePost, getAllPosts, getPost, addPost, getPostById, putPostById, getAllM, addPostM, updatePostById }

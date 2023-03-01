@@ -7,7 +7,7 @@ import {getUserById, updateUserById} from '../controllers/user'
 import post from '../controllers/post'
 import user_model from '../models/user_model'
 
-router.get('/', async (req:Request, res) => {
+router.get('/', auth.authenticateMiddleware, async (req:Request, res) => {
     try {
         const response = await getUserById(req)
         response.sendRestResponse(res)

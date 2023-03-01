@@ -25,8 +25,7 @@ export = (server: http.Server) => {
         echoHandler(io, socket)
         postHandler(io, socket)
         chatHandler(io, socket)
-
-        await socket.join(socket.data.user)
+        await socket.join('global')
     })
     return io
 

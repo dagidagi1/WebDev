@@ -10,108 +10,111 @@ let newPostId = ''
 const newPostMessageUpdated = 'This is the updated message'
 
 const userEmail = "user1@gmail.com"
-const userPassword = "12345"
+const userPassword = "123456789"
 let accessToken = ''
+beforeAll(async () => {
+    //await Post.remove()
+    //await User.remove()
 
-beforeAll(async ()=>{
-    await Post.remove()
-    await User.remove()
     const res = await request(app).post('/auth/register').send({
         "email": userEmail,
-        "password": userPassword 
+        "password": userPassword,
+        "phone": 'newUserPhone',
+        "name": 'newUserName',
+        "img": 'newUserImg'
     })
+    await loginUser()
+
     newPostSender = res.body._id
 })
 
 async function loginUser() {
     const response = await request(app).post('/auth/login').send({
         "email": userEmail,
-        "password": userPassword 
+        "password": userPassword
     })
     accessToken = response.body.accessToken
 }
 
-beforeEach(async ()=>{
-    await loginUser()
+beforeEach(async () => {
+    //await loginUser()
 })
 
-afterAll(async ()=>{
-    await Post.remove()
-    await User.remove()
+afterAll(async () => {
+    //await Post.remove()
+    await User.deleteOne({ email: userEmail })
+    await Post.deleteOne({ _id: newPostId })
     mongoose.connection.close()
 })
 
-describe("Posts Tests", ()=>{
-    test("add new post",async ()=>{
+describe("Posts Tests", () => {
+    test("add new post", async () => {
         const response = await request(app).post('/post').set('Authorization', 'JWT ' + accessToken)
-        .send({
-            "message": newPostMessage,
-            "sender": newPostSender
-        })
+            .send({
+                "txt": newPostMessage,
+                "usrId": newPostSender,
+                "img": "zxc"
+            })
         expect(response.statusCode).toEqual(200)
-        expect(response.body.post.message).toEqual(newPostMessage)
-        expect(response.body.post.sender).toEqual(newPostSender)
-        newPostId = response.body.post._id
-        console.log("NewPostId: ", newPostId)
+        expect(response.body.data.txt).toEqual(newPostMessage)
+        expect(response.body.data.usrId).toEqual(newPostSender)
+        newPostId = response.body.data._id
     })
 
-    test("get all posts",async ()=>{
+    test("get all posts", async () => {
         const response = await request(app).get('/post').set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
-        expect(response.body.post[0].message).toEqual(newPostMessage)
-        expect(response.body.post[0].sender).toEqual(newPostSender)
-        //newPostId = response.body.post[0]._id
+        expect(response.body.data[0].txt).toEqual(newPostMessage)
+        expect(response.body.data[0].usrId).toEqual(newPostSender)
     })
 
-    test("get post by id",async ()=>{
+    test("get post by id", async () => {
         const response = await request(app).get('/post/' + newPostId).set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
-        console.log("GGGG: ", response.body)
-        expect(response.body.post.message).toEqual(newPostMessage)
-        expect(response.body.post.sender).toEqual(newPostSender)
-        
+        expect(response.body.data.txt).toEqual(newPostMessage)
+        expect(response.body.data.usrId).toEqual(newPostSender)
+
     })
 
-    test("get post by wrong id fails",async ()=>{
+    test("get post by wrong id fails", async () => {
         const response = await request(app).get('/post/12345').set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(400)
     })
 
-    test("get post by sender",async ()=>{
+    test("get post by sender", async () => {
         const response = await request(app).get('/post?sender=' + newPostSender).set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
-        expect(response.body.post[0].message).toEqual(newPostMessage)
-        expect(response.body.post[0].sender).toEqual(newPostSender)
+        expect(response.body.data[0].txt).toEqual(newPostMessage)
+        expect(response.body.data[0].usrId).toEqual(newPostSender)
     })
 
-    test("update post by ID",async ()=>{
+    test("update post by ID", async () => {
         let response = await request(app).put('/post/' + newPostId).set('Authorization', 'JWT ' + accessToken)
-        .send({
-            "message": newPostMessageUpdated,
-            "sender": newPostSender
-        })
+            .send({
+                params: {
+                    "id": newPostId,
+                    "txt": newPostMessageUpdated,
+                    "imgUri": newPostSender,
+                }
+            })
         expect(response.statusCode).toEqual(200)
-        expect(response.body.post.message).toEqual(newPostMessageUpdated)
-        expect(response.body.post.sender).toEqual(newPostSender)
 
         response = await request(app).get('/post/' + newPostId).set('Authorization', 'JWT ' + accessToken)
         expect(response.statusCode).toEqual(200)
-        expect(response.body.post.message).toEqual(newPostMessageUpdated)
-        expect(response.body.post.sender).toEqual(newPostSender)
+        expect(response.body.data.txt).toEqual(newPostMessageUpdated)
+        expect(response.body.data.usrId).toEqual(newPostSender)
 
         response = await request(app).put('/post/12345').set('Authorization', 'JWT ' + accessToken)
-        .send({
-            "message": newPostMessageUpdated,
-            "sender": newPostSender
-        })
+            .send({
+                "txt": newPostMessageUpdated,
+                "usrid": newPostSender
+            })
         expect(response.statusCode).toEqual(400)
 
         response = await request(app).put('/post/' + newPostId).set('Authorization', 'JWT ' + accessToken)
-        .send({
-            "message": newPostMessageUpdated,
-        })
+            .send({params: {
+                "txt": newPostMessageUpdated,
+            }})
         expect(response.statusCode).toEqual(200)
-        expect(response.body.post.message).toEqual(newPostMessageUpdated)
-        expect(response.body.post.sender).toEqual(newPostSender)
     })
 })

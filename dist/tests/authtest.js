@@ -18,14 +18,17 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const user_model_1 = __importDefault(require("../models/user_model"));
 const newUserEmail = 'dagi@dagi.da';
 const NewUserPassword = '12345678';
+const newUserPhone = '1231231231';
+const newUserName = 'asdasd';
+const newUserImg = 'http://192.168.59.246:3000/upload_files/usr_icon.jpg';
 const newMessage = 'this is the new updated message';
 let test_id = '0';
 let accessToken = '', refreshToken = '';
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield user_model_1.default.remove();
+    //await User.remove()
 }));
 afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
-    yield user_model_1.default.remove();
+    yield user_model_1.default.deleteOne({ email: newUserEmail });
     mongoose_1.default.connection.close();
 }));
 describe("Auth Tests:", () => {
@@ -43,9 +46,9 @@ describe("Auth Tests:", () => {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/register').send({
             "email": newUserEmail,
             "password": NewUserPassword,
-            "phone": "123",
-            "name": "123",
-            "img": "123"
+            "phone": newUserPhone,
+            "name": newUserName,
+            "img": newUserImg
         });
         expect(response.statusCode).toEqual(400);
     }));
@@ -103,27 +106,4 @@ describe("Auth Tests:", () => {
         expect(response.statusCode).toEqual(400);
     }));
 });
-// describe("Auth Tests:",()=> {
-//     test("(1.1)Register test", async() =>{
-//         const response = await request(app).post('/auth/register').send({
-//             "email": newUserEmail,
-//             "password": NewUserPassword
-//         })
-//         expect(response.statusCode).toEqual(200)
-//     })
-//     test("(1.2)Login test", async() =>{
-//         const response = await request(app).post('/auth/login').send({
-//             "email": newUserEmail,
-//             "password": NewUserPassword
-//         })
-//         expect(response.statusCode).toEqual(200)
-//     })
-//     test("(1.3)Logout test", async() =>{
-//         const response = await request(app).post('/auth/logout').send({
-//             "email": newUserEmail,
-//             "password": NewUserPassword
-//         })
-//         expect(response.statusCode).toEqual(200)
-//     })
-// })
 //# sourceMappingURL=authtest.js.map

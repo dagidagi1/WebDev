@@ -125,5 +125,17 @@ const updatePostById = (req) => __awaiter(void 0, void 0, void 0, function* () {
         return new MyResponse_1.default(null, req.userId, new MyError_1.default(400, err.message));
     }
 });
-module.exports = { getAllPosts, getPost, addPost, getPostById, putPostById, getAllM, addPostM, updatePostById };
+const deletePost = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const postId = req.body.params.id;
+        const result = yield post_model_1.default.deleteOne({ "_id": postId });
+        if (result.deletedCount == 1)
+            return new MyResponse_1.default(null, req.userId, null);
+        return new MyResponse_1.default(null, req.userId, new MyError_1.default(400, "Post doesn't exist"));
+    }
+    catch (err) {
+        return new MyResponse_1.default(null, req.userId, new MyError_1.default(400, err.message));
+    }
+});
+module.exports = { deletePost, getAllPosts, getPost, addPost, getPostById, putPostById, getAllM, addPostM, updatePostById };
 //# sourceMappingURL=post.js.map

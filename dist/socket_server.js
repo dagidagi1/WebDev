@@ -38,7 +38,7 @@ module.exports = (server) => {
         (0, echoHandler_1.default)(io, socket);
         (0, postHandler_1.default)(io, socket);
         (0, chatHandler_1.default)(io, socket);
-        yield socket.join(socket.data.user);
+        yield socket.join('global');
     }));
     return io;
 };

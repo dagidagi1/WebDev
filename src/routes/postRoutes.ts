@@ -56,6 +56,7 @@ import post from '../controllers/post'
 *                           sender: 'def'
 */
 router.get('/', auth.authenticateMiddleware, async (req, res) => {
+    console.log("ROUTER: GET: /POST/")
     try {
         const response = await post.getAllM(MyRequest.fromRestRequest(req))
         response.sendRestResponse(res)
@@ -123,5 +124,17 @@ router.post('/', auth.authenticateMiddleware, async (req, res) => {
             'message': err.message
         })
     }
+})
+router.post('/delete/:id', auth.authenticateMiddleware, async (req, res) => {
+    try{
+        const response = await post.deletePost(MyRequest.fromRestRequest(req))
+        response.sendRestResponse(res)
+    } catch (err){
+        res.status(400).send({
+            'status': 'Fail',
+            'message': err.message
+        })
+    }
+    
 })
 export = router
