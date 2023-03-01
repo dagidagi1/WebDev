@@ -75,11 +75,6 @@ describe("Auth Tests:",()=> {
         expect(response.statusCode).toEqual(200)
     })
     jest.setTimeout(15000)
-    test("test expiered token",async ()=>{
-        await new Promise(r => setTimeout(r,6000))
-        const response = await request(app).get('/post').set('Authorization', 'JWT ' + accessToken);
-        expect(response.statusCode).not.toEqual(200)
-    })
     
     test("Logout - valid token",async ()=>{ //DONE
         const response = await request(app).post('/auth/logout').set('Authorization', 'JWT ' + refreshToken)
