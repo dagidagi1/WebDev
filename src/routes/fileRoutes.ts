@@ -2,7 +2,7 @@ import express from 'express'
 const router = express.Router()
 import multer from "multer";
 
-const base = "http://192.168.59.246:3000/";
+const base = 'http://192.168.111.246:3000/';
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, './upload_files/');
